@@ -1,54 +1,45 @@
 <?php
 session_start();
 
-// Kiểm tra xem người dùng đã đăng nhập hay chưa
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    // Người dùng đã đăng nhập, chuyển họ đến trang "admin"
+
     header('Location: index.php');
     exit;
 }
 
-// Bao gồm tệp cấu hình
 require_once 'config.php';
 
-// Biến để lưu trữ thông báo lỗi
 $error_message = '';
 $success_message = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Lấy thông tin từ biểu mẫu đăng nhập
+
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // Kiểm tra xem các trường có rỗng không
     if (empty($username) || empty($password)) {
         $error_message = "Vui lòng điền đầy đủ thông tin.";
     } else {
-        // Đối với mục đích bảo mật, bạn nên sử dụng hàm băm để băm mật khẩu và kiểm tra với dữ liệu trong cơ sở dữ liệu.
-        
-        // Sử dụng prepared statements để tránh SQL injection
+
         $sql = "SELECT id, username, password FROM users WHERE username = ? AND password = ?";
         if ($stmt = $conn->prepare($sql)) {
-            // Bind biến với prepared statement như là tham số
+
             $stmt->bind_param("ss", $username, $password);
 
-            // Thực thi prepared statement
             $stmt->execute();
 
-            // Lưu trữ kết quả
             $stmt->store_result();
 
             if ($stmt->num_rows === 1) {
-                // Xác thực thành công
+                
                 $_SESSION['loggedin'] = true;
-                $_SESSION['username'] = $username; // Lưu tên đăng nhập của người dùng trong phiên
+                $_SESSION['username'] = $username;
                 $success_message = true;
             } else {
-                // Xác thực thất bại
+
                 $error_message = "Tên đăng nhập hoặc mật khẩu không đúng.";
             }
 
-            // Đóng statement
             $stmt->close();
         }
     }
