@@ -1,1 +1,1 @@
-Thực hiện kết nối csdl trong file: config/config.php
+Thực hiện kết nối csdl trong file: config.php
