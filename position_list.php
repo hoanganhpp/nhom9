@@ -10,12 +10,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // Lấy danh sách chức vụ cùng với tên nhân viên
 $query = "
     SELECT 
-        cv.id,            -- Thêm ID chức vụ
-        cv.employee_id, 
+        cv.employee_id,
         nv.ten AS employee_name, 
-        cv.chuc_vu, 
-        cv.mo_ta, 
-        cv.trang_thai 
+        cv.chuc_vu
     FROM 
         bang_chuc_vu cv
     JOIN 
@@ -41,34 +38,26 @@ include 'layout/header.php';
             <table id="positionTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Employee ID</th>
                         <th>Tên Nhân Viên</th>
                         <th>Tên Chức Vụ</th>
-                        <th>Mô Tả</th>
-                        <th>Trạng Thái</th>
                         <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $row['id']; ?></td>
                             <td><?php echo $row['employee_id']; ?></td>
                             <td><?php echo $row['employee_name']; ?></td>
                             <td><?php echo $row['chuc_vu']; ?></td>
-                            <td><?php echo $row['mo_ta']; ?></td>
-                            <td><?php echo $row['trang_thai']; ?></td>
                             <td>
                                 <button class="btn btn-warning edit-btn" 
-                                        data-id="<?php echo $row['id']; ?>" 
+                                        data-id="<?php echo $row['employee_id']; ?>" 
                                         data-name="<?php echo $row['chuc_vu']; ?>" 
-                                        data-description="<?php echo $row['mo_ta']; ?>" 
-                                        data-status="<?php echo $row['trang_thai']; ?>" 
                                         data-toggle="modal" 
                                         data-target="#editPositionModal">Sửa</button>
 
-                                <button class="btn btn-danger delete-btn" data-id="<?php echo $row['id']; ?>">Xóa</button>
+                                <button class="btn btn-danger delete-btn" data-id="<?php echo $row['employee_id']; ?>">Xóa</button>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -94,17 +83,6 @@ include 'layout/header.php';
                     <div class="form-group">
                         <label for="editPositionName">Tên Chức Vụ</label>
                         <input type="text" class="form-control" id="editPositionName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editPositionDescription">Mô Tả</label>
-                        <textarea class="form-control" id="editPositionDescription" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="editPositionStatus">Trạng Thái</label>
-                        <select id="editPositionStatus" class="form-control">
-                            <option value="hoạt động">Hoạt Động</option>
-                            <option value="không hoạt động">Không Hoạt Động</option>
-                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                 </form>
@@ -133,17 +111,6 @@ include 'layout/header.php';
                         <label for="addPositionName">Tên Chức Vụ</label>
                         <input type="text" class="form-control" id="addPositionName" required>
                     </div>
-                    <div class="form-group">
-                        <label for="addPositionDescription">Mô Tả</label>
-                        <textarea class="form-control" id="addPositionDescription" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="addPositionStatus">Trạng Thái</label>
-                        <select id="addPositionStatus" class="form-control">
-                            <option value="hoạt động">Hoạt Động</option>
-                            <option value="không hoạt động">Không Hoạt Động</option>
-                        </select>
-                    </div>
                     <button type="submit" class="btn btn-primary">Thêm Chức Vụ</button>
                 </form>
             </div>
@@ -158,21 +125,17 @@ $(document).ready(function() {
     $('.edit-btn').click(function() {
         $('#editPositionId').val($(this).data('id'));
         $('#editPositionName').val($(this).data('name'));
-        $('#editPositionDescription').val($(this).data('description'));
-        $('#editPositionStatus').val($(this).data('status'));
     });
 
     $('#editPositionForm').on('submit', function(event) {
         event.preventDefault();
         const id = $('#editPositionId').val();
         const name = $('#editPositionName').val();
-        const description = $('#editPositionDescription').val();
-        const status = $('#editPositionStatus').val();
 
         $.ajax({
             url: 'edit_position.php',
             type: 'POST',
-            data: { id: id, chuc_vu: name, mo_ta: description, trang_thai: status },
+            data: { employee_id: id, chuc_vu: name },
             success: function(response) {
                 const result = JSON.parse(response);
                 alert(result.message);
@@ -191,13 +154,11 @@ $(document).ready(function() {
         event.preventDefault();
         const employeeId = $('#addEmployeeId').val();
         const name = $('#addPositionName').val();
-        const description = $('#addPositionDescription').val();
-        const status = $('#addPositionStatus').val();
 
         $.ajax({
             url: 'add_position.php',
             type: 'POST',
-            data: { employee_id: employeeId, chuc_vu: name, mo_ta: description, trang_thai: status },
+            data: { employee_id: employeeId, chuc_vu: name },
             success: function(response) {
                 const result = JSON.parse(response);
                 alert(result.message);
@@ -218,7 +179,7 @@ $(document).ready(function() {
             $.ajax({
                 url: 'delete_position.php',
                 type: 'POST',
-                data: { id: positionId },
+                data: { employee_id: positionId },
                 success: function(response) {
                     const result = JSON.parse(response);
                     alert(result.message);

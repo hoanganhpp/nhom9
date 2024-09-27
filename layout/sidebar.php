@@ -58,7 +58,7 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <form method="post" id="logoutForm">
+                        <form method="post" action="logout.php" id="logoutForm">
                             <input type="submit" name="logout" value="Log Out" id="logoutButton" style="cursor: pointer;">
                         </form>
                     </li>
@@ -104,7 +104,6 @@
     }
 </style>
 
-
 <script>
     // Chức năng chuyển hướng và làm sáng mục đã chọn
     function navigateTo(page, event) {
@@ -114,14 +113,6 @@
         event.currentTarget.classList.add('active'); // Đánh dấu liên kết đang được chọn
         window.location.href = page; // Chuyển hướng đến trang mới
     }
-
-    // Xử lý đăng xuất
-    document.getElementById('logoutButton').addEventListener('click', function(event) {
-        event.preventDefault(); // Ngăn không cho trang tải lại
-        if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-            document.getElementById('logoutForm').submit(); // Gửi form đăng xuất nếu xác nhận
-        }
-    });
 
     // Đánh dấu mục đang được chọn khi tải lại trang
     document.addEventListener('DOMContentLoaded', function() {
