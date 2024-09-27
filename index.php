@@ -3,77 +3,113 @@ session_start();
 
 // Kiểm tra xem người dùng đã đăng nhập hay chưa
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    // Người dùng chưa đăng nhập, chuyển họ đến trang đăng nhập
     header('Location: login.php');
     exit;
 }
+
 // Kiểm tra nút Đăng Xuất đã được nhấn
 if (isset($_POST['logout'])) {
-    // Hủy phiên đăng nhập
     session_destroy();
-    header('Location: login.php'); // Chuyển hướng đến trang đăng nhập sau khi đăng xuất
+    header('Location: login.php');
     exit;
 }
-?>
-<?php
+
 include 'layout/header.php';
 ?>
+
 <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Domain Management</h4>
-                        </div>
-                        <div class="card-body">
-                        <form id="domainForm" class="mb-3">
-        <div class="form-group">
-            <label for="domainName">Domain Name</label>
-            <input type="text" class="form-control" id="domainName" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Add Domain</button>
-    </form>
-    <table id="domainTable" class="display">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Domain Name</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-        </tbody>
-    </table>
-    <button id="exportButton" class="btn btn-success mt-3"><i class="fas fa-file-excel"></i> Export to Excel</button>
-                        </div>
-                    </div>
-                </div>
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Hồ sơ nhân viên</h4>
             </div>
-            
-<div class="modal fade" id="editDomainModal" tabindex="-1" aria-labelledby="editDomainModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editDomainModalLabel">Edit Domain</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editDomainForm">
-                    <input type="hidden" id="editDomainId">
-                    <div class="form-group">
-                        <label for="editDomainName">Domain Name</label>
-                        <input type="text" class="form-control" id="editDomainName" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </form>
+            <div class="card-body">
+                <table id="employeeTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Nhân Viên</th>
+                            <th>Hồ Sơ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu sẽ được nạp ở đây bằng Ajax -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Hàm để nạp lại bảng nhân viên
+    function loadEmployees() {
+        $.ajax({
+            url: 'fetch_employees.php',
+            type: 'GET',
+            success: function(data) {
+                $('#employeeTable tbody').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching employees: ' + error);
+            }
+        });
+    }
+
+    // Tải bảng nhân viên khi trang được tải
+    loadEmployees();
+});
+</script>
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Màu nền tổng thể nhẹ */
+        color: #343a40; /* Màu chữ tối */
+        font-family: 'Arial', sans-serif; /* Phông chữ dễ đọc */
+    }
+    .card {
+        border: none; /* Không viền cho thẻ card */
+    }
+    table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #dee2e6; /* Viền nhẹ cho ô */
+        font-size: 16px; /* Kích thước chữ */
+    }
+    th {
+        background-color: #007bff; /* Màu xanh dương cho tiêu đề */
+        color: white;
+    }
+    tr:nth-child(odd) {
+        background-color: #e9ecef; /* Màu nền cho hàng lẻ */
+    }
+    tr:nth-child(even) {
+        background-color: #ffffff; /* Màu nền cho hàng chẵn */
+    }
+    tr:hover {
+        background-color: #d1ecf1; /* Màu nền nhẹ cho hàng khi di chuột qua */
+    }
+    .btn-info {
+        background-color: #007bff; /* Nút màu xanh */
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .btn-info:hover {
+        background-color: #0056b3; /* Màu nút khi hover */
+    }
+</style>
+
 <?php
 include 'layout/footer.php';
 ?>
-

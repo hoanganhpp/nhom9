@@ -24,3 +24,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+<?php
+session_start();
+include 'db_connection.php'; // Kết nối đến cơ sở dữ liệu
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['domainName'])) {
+    $domainName = $_POST['domainName'];
+
+    // Thực hiện truy vấn thêm miền
+    $stmt = $conn->prepare("INSERT INTO bang_mien (ten_mien, trang_thai) VALUES (?, 'hoạt động')");
+    $stmt->bind_param("s", $domainName);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Domain added successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error adding domain']);
+    }
+
+    $stmt->close();
+    $conn->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+}
+?>
