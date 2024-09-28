@@ -13,7 +13,7 @@ if (isset($_GET['id'])) {
     $id = intval($_GET['id']); // Lấy ID nhân viên từ URL
 
     // Truy vấn thông tin nhân viên và ảnh
-    $query = "SELECT nv.*, a.anh AS image_url, l.luong_co_ban, l.tro_cap, l.thuong, l.phat, 
+    $query = "SELECT nv.*, a.image_url AS image_url, l.luong_co_ban, l.tro_cap, l.thuong, l.phat, 
                      cv.chuc_vu, bc.bang_cap, ln.loai_nhan_vien
               FROM bang_nhan_vien nv
               LEFT JOIN bang_anh_nhan_vien a ON nv.id = a.employee_id
@@ -81,8 +81,6 @@ include 'layout/header.php';
             </div>
         </div>
     </div>
-
-    
 </div>
 
 <style>

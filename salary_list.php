@@ -10,7 +10,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // Lấy danh sách lương cùng với tên nhân viên
 $query = "
     SELECT 
-        l.employee_id,      
+        l.id AS salary_id,         
+        nv.id AS employee_id,      
         nv.ten AS employee_name, 
         l.luong_co_ban, 
         l.tro_cap, 
@@ -64,7 +65,7 @@ include 'layout/header.php';
                             <td><?php echo number_format($row['phat'], 2); ?></td>
                             <td>
                                 <button class="btn btn-warning edit-btn" 
-                                        data-id="<?php echo $row['employee_id']; ?>" 
+                                        data-id="<?php echo $row['salary_id']; ?>" 
                                         data-basic-salary="<?php echo $row['luong_co_ban']; ?>" 
                                         data-allowance="<?php echo $row['tro_cap']; ?>" 
                                         data-bonus="<?php echo $row['thuong']; ?>" 
@@ -72,7 +73,7 @@ include 'layout/header.php';
                                         data-toggle="modal" 
                                         data-target="#editSalaryModal">Sửa</button>
 
-                                <button class="btn btn-danger delete-btn" data-id="<?php echo $row['employee_id']; ?>">Xóa</button>
+                                <button class="btn btn-danger delete-btn" data-id="<?php echo $row['salary_id']; ?>">Xóa</button>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -130,41 +131,6 @@ include 'layout/header.php';
     </div>
 </div>
 
-<!-- Modal Chỉnh Sửa Lương -->
-<div class="modal fade" id="editSalaryModal" tabindex="-1" aria-labelledby="editSalaryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editSalaryModalLabel">Chỉnh Sửa Lương</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editSalaryForm">
-                    <input type="hidden" id="editSalaryId">
-                    <div class="form-group">
-                        <label for="editBasicSalary">Lương Cơ Bản</label>
-                        <input type="number" class="form-control" id="editBasicSalary" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editAllowance">Trợ Cấp</label>
-                        <input type="number" class="form-control" id="editAllowance" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editBonus">Thưởng</label>
-                        <input type="number" class="form-control" id="editBonus" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editPenalty">Phạt</label>
-                        <input type="number" class="form-control" id="editPenalty" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -183,58 +149,6 @@ $(document).ready(function() {
             type: 'POST',
             data: { 
                 employee_id: employeeId, 
-                luong_co_ban: basicSalary, 
-                tro_cap: allowance, 
-                thuong: bonus, 
-                phat: penalty 
-            },
-            success: function(response) {
-                const result = JSON.parse(response);
-                alert(result.message);
-                if (result.success) {
-                    location.reload();
-                }
-            },
-            error: function(xhr, status, error) {
-                alert('Error: ' + error);
-            }
-        });
-    });
-
-    // Xử lý nút chỉnh sửa
-    $(document).on('click', '.edit-btn', function() {
-        // Lấy dữ liệu từ nút nhấn
-        const salaryId = $(this).data('id');
-        const basicSalary = $(this).data('basic-salary');
-        const allowance = $(this).data('allowance');
-        const bonus = $(this).data('bonus');
-        const penalty = $(this).data('penalty');
-
-        // Điền dữ liệu vào modal
-        $('#editSalaryId').val(salaryId);
-        $('#editBasicSalary').val(basicSalary);
-        $('#editAllowance').val(allowance);
-        $('#editBonus').val(bonus);
-        $('#editPenalty').val(penalty);
-
-        // Hiện modal
-        $('#editSalaryModal').modal('show');
-    });
-
-    // Xử lý form chỉnh sửa
-    $('#editSalaryForm').on('submit', function(event) {
-        event.preventDefault();
-        const salaryId = $('#editSalaryId').val();
-        const basicSalary = $('#editBasicSalary').val();
-        const allowance = $('#editAllowance').val();
-        const bonus = $('#editBonus').val();
-        const penalty = $('#editPenalty').val();
-
-        $.ajax({
-            url: 'edit_salary.php',
-            type: 'POST',
-            data: { 
-                id: salaryId, 
                 luong_co_ban: basicSalary, 
                 tro_cap: allowance, 
                 thuong: bonus, 

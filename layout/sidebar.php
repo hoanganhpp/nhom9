@@ -52,7 +52,7 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a href="#" class='sidebar-link' onclick="navigateTo('degrees.php', event)">
+                        <a href="#" class='sidebar-link' onclick="navigateTo('departments.php', event)">
                             <i class="bi bi-grid-fill"></i>
                             <span>Phòng Ban</span>
                         </a>

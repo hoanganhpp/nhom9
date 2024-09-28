@@ -140,7 +140,7 @@ $result = $conn->query($query);
                             <td><?php echo $row['id']; ?></td>
                             <td><?php echo $row['ten']; ?></td>
                             <td><?php echo $row['bang_cap'] ?? 'Chưa có'; ?></td>
-                            <td><?php echo $row['ten_phong_ban']; ?></td>
+                            <td><?php echo $row['ten_phong_ban'] ??'Chưa có' ?></td>
                             <td>
                                 <button class="btn btn-warning edit-btn" data-id="<?php echo $row['id']; ?>" 
                                         data-name="<?php echo $row['ten']; ?>" 

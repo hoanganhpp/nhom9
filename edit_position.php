@@ -2,24 +2,29 @@
 session_start();
 include 'config.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
-    $chuc_vu = $_POST['chuc_vu'];
-    $mo_ta = $_POST['mo_ta'];
-    $trang_thai = $_POST['trang_thai'];
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
 
-    $stmt = $conn->prepare("UPDATE bang_chuc_vu SET chuc_vu = ?, mo_ta = ?, trang_thai = ? WHERE id = ?");
-    $stmt->bind_param("sssi", $chuc_vu, $mo_ta, $trang_thai, $id);
-    
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $employee_id = $_POST['employee_id'];
+    $chuc_vu = $_POST['chuc_vu'];
+
+    if (empty($employee_id) || empty($chuc_vu)) {
+        echo json_encode(['success' => false, 'message' => 'Vui lòng điền đầy đủ thông tin']);
+        exit;
+    }
+
+    $stmt = $conn->prepare("UPDATE bang_chuc_vu SET chuc_vu = ? WHERE employee_id = ?");
+    $stmt->bind_param("si", $chuc_vu, $employee_id);
+
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Chức vụ đã được cập nhật']);
+        echo json_encode(['success' => true, 'message' => 'Cập nhật chức vụ thành công']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Lỗi khi cập nhật chức vụ']);
+        echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $stmt->error]);
     }
 
     $stmt->close();
-    $conn->close();
-} else {
-    echo json_encode(['success' => false, 'message' => 'Yêu cầu không hợp lệ']);
 }
 ?>
